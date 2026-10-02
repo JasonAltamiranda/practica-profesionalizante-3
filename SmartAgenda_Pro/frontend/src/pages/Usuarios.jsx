@@ -23,10 +23,14 @@ export default function Usuarios() {
     fetchUsuarios();
   }, []);
 
+  // En la base el estado se guarda en minúsculas ('activo' / 'inactivo')
+  // y el login solo permite entrar si es exactamente 'activo'.
+  const estaActivo = (u) => (u.estado || 'activo').toLowerCase() === 'activo';
+
   async function toggleEstado(u) {
-    const nuevoEstado = u.estado === 'Activo' ? 'Inactivo' : 'Activo';
+    const nuevoEstado = estaActivo(u) ? 'inactivo' : 'activo';
     const confirma = window.confirm(
-      `¿${nuevoEstado === 'Activo' ? 'Activar' : 'Desactivar'} al usuario "${u.nombre} ${u.apellido}"?`
+      `¿${nuevoEstado === 'activo' ? 'Activar' : 'Desactivar'} al usuario "${u.nombre} ${u.apellido}"?`
     );
     if (!confirma) return;
 
@@ -90,17 +94,17 @@ export default function Usuarios() {
                     </span>
                   </td>
                   <td>
-                    <span className={`badge badge-${(u.estado || 'activo').toLowerCase()}`}>
-                      {u.estado || 'Activo'}
+                    <span className={`badge badge-${estaActivo(u) ? 'activo' : 'inactivo'}`}>
+                      {estaActivo(u) ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
                   <td>
                     <button
-                      className={`btn btn-sm ${u.estado === 'Activo' ? 'btn-danger' : 'btn-success'}`}
+                      className={`btn btn-sm ${estaActivo(u) ? 'btn-danger' : 'btn-success'}`}
                       onClick={() => toggleEstado(u)}
                     >
-                      <i className={`fas ${u.estado === 'Activo' ? 'fa-user-slash' : 'fa-user-check'}`}></i>
-                      {u.estado === 'Activo' ? ' Desactivar' : ' Activar'}
+                      <i className={`fas ${estaActivo(u) ? 'fa-user-slash' : 'fa-user-check'}`}></i>
+                      {estaActivo(u) ? ' Desactivar' : ' Activar'}
                     </button>
                   </td>
                 </tr>
